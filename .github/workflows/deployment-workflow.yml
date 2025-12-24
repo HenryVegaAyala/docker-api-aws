@@ -31,8 +31,7 @@ jobs:
 
       - name: Build and push Docker image
         run: |
-          cd ${{env.DIR}}
-          docker build -t ${{ env.ECR_REPOSITORY }}:latest ./fastapi
+          docker build -t ${{ env.ECR_REPOSITORY }}:latest ./${{ env.DIR }}
           docker push ${{ env.ECR_REPOSITORY }}:latest
 
       - name: Deploy to ECS
