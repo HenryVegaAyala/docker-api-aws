@@ -25,7 +25,8 @@ async def healthcheck():
         "status": "healthy",
         "timestamp": datetime.now().isoformat(),
         "service": "docker-api-aws",
-        "version": "1.0.0"
+        "version": "1.0.0",
+        "app": "fastapi"
     }
 
 
