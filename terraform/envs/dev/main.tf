@@ -59,16 +59,6 @@ variable "enable_alb" {
 }
 
 # ==============================================================================
-# CONFIGURACIÓN DE REDIS (ELASTICACHE)
-# ==============================================================================
-
-variable "enable_redis" {
-  type        = bool
-  default     = true
-  description = "Habilitar ElastiCache Redis"
-}
-
-# ==============================================================================
 # CONFIGURACIÓN DE SSL/TLS Y DNS
 # ==============================================================================
 
@@ -80,7 +70,6 @@ variable "enable_ssl" {
 
 variable "domain_name" {
   type        = string
-  default     = "hvegatech.me"
   description = "Dominio principal para el certificado SSL (ej: example.com)"
 }
 
