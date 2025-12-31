@@ -356,7 +356,32 @@ resource "aws_ecs_task_definition" "task" {
         }
       }
 
-      secrets =  []
+      secrets =  [
+        {
+          name = "DB_URL",
+          valueFrom = "${var.secret_arn}:DB_URL::"
+        },
+        {
+          name = "POSTGRES_USER",
+          valueFrom = "${var.secret_arn}:POSTGRES_USER::"
+        },
+        {
+          name = "POSTGRES_PASSWORD",
+          valueFrom = "${var.secret_arn}:POSTGRES_PASSWORD::"
+        },
+        {
+          name = "POSTGRES_DB",
+          valueFrom = "${var.secret_arn}:POSTGRES_DB::"
+        },
+        {
+          name = "POSTGRES_HOST",
+          valueFrom = "${var.secret_arn}:POSTGRES_HOST::"
+        },
+        {
+          name = "POSTGRES_PORT",
+          valueFrom = "${var.secret_arn}:POSTGRES_PORT::"
+        }
+      ]
 
       environment = [
         { name = "PORT", value = "3000" },

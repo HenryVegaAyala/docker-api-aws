@@ -165,6 +165,11 @@ resource "aws_cloudwatch_log_group" "vpc_flow_log" {
   name              = "/aws/vpc/flowlogs/${var.project_name}-${var.environment}"
   retention_in_days = 7
 
+  # Evitar error si el grupo ya existe
+  lifecycle {
+    ignore_changes = [retention_in_days]
+  }
+
   tags = {
     Name        = "${var.project_name}-${var.environment}-vpc-flow-logs"
     Environment = var.environment

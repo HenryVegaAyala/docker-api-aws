@@ -80,6 +80,36 @@ variable "subdomain" {
 }
 
 # ==============================================================================
+# CONFIGURACIÓN DE RDS
+# ==============================================================================
+
+variable "enabled_rds" {
+  type        = bool
+  default     = true
+  description = "Habilitar RDS para la base de datos"
+}
+
+variable "db_username" {
+  type        = string
+  default     = "dbadmin"
+  description = "Nombre de usuario para la base de datos RDS"
+}
+
+variable "db_password" {
+  type        = string
+  default     = "ChangeMe123!"
+  description = "Nombre de usuario para la base de datos RDS"
+}
+
+
+variable "db_name" {
+  type        = string
+  default     = "appdb"
+  description = "Nombre de usuario para la base de datos RDS"
+}
+
+
+# ==============================================================================
 # MÓDULOS DE INFRAESTRUCTURA
 # ==============================================================================
 
@@ -113,17 +143,21 @@ module "iam" {
 }
 
 module "cloudwatch" {
-  source                  = "../../modules/cloudwatch"
-  project_name            = var.project_name
-  environment             = var.environment
-  retention_days          = 7 # Reducido de 14 a 7 días para dev
-  ecs_execution_role_arn  = module.iam.task_execution_role_arn
+  source                 = "../../modules/cloudwatch"
+  project_name           = var.project_name
+  environment            = var.environment
+  retention_days         = 7 # Reducido de 14 a 7 días para dev
+  ecs_execution_role_arn = module.iam.task_execution_role_arn
 }
 
 module "secrets" {
   source       = "../../modules/secrets"
   project_name = var.project_name
   environment  = var.environment
+  rds_endpoint = var.enabled_rds ? module.rds[0].endpoint : ""
+  db_username  = var.db_username
+  db_password  = var.db_password
+  db_name      = var.db_name
 }
 
 module "ecs" {
@@ -169,4 +203,19 @@ module "route53" {
   subdomain    = var.subdomain
   alb_dns_name = module.ecs.alb_dns_name
   alb_zone_id  = module.ecs.alb_zone_id
+}
+
+# Módulo RDS
+module "rds" {
+  count              = var.enabled_rds ? 1 : 0
+  source             = "../../modules/rds"
+  project_name       = var.project_name
+  environment        = var.environment
+  db_username        = var.db_username
+  db_password        = var.db_password
+  db_name            = var.db_name
+  vpc_id             = module.vpc.vpc_id
+  subnet_ids         = module.vpc.private_subnet_ids
+  ecs_security_group = module.ecs.ecs_security_group_id
+  depends_on         = [module.ecs]
 }
