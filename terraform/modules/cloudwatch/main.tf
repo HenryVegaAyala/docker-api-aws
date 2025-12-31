@@ -24,9 +24,11 @@ data "aws_region" "current" {}
 
 # KMS Key para encriptar logs
 resource "aws_kms_key" "cloudwatch" {
-  count               = var.enable_encryption ? 1 : 0
-  description         = "KMS key for CloudWatch Logs encryption - ${var.project_name}-${var.environment}"
-  enable_key_rotation = true
+  count                   = var.enable_encryption ? 1 : 0
+  description             = "KMS key for CloudWatch Logs encryption - ${var.project_name}-${var.environment}"
+  enable_key_rotation     = true
+  deletion_window_in_days = 7 # Reducir ventana de eliminación (mínimo 7 días)
+  is_enabled              = true
 
   policy = jsonencode({
     Version = "2012-10-17"
@@ -94,6 +96,16 @@ resource "aws_cloudwatch_log_group" "ecs" {
   name              = "/ecs/${var.project_name}-${var.environment}"
   retention_in_days = var.retention_days
   kms_key_id        = var.enable_encryption ? aws_kms_key.cloudwatch[0].arn : null
+
+  # Asegurar que el log group se puede recrear sin conflictos
+  lifecycle {
+    create_before_destroy = false
+  }
+
+  # Depende del KMS key si la encriptación está habilitada
+  depends_on = [
+    aws_kms_key.cloudwatch
+  ]
 
   tags = {
     Name        = "${var.project_name}-${var.environment}-logs"
