@@ -216,6 +216,15 @@ resource "aws_security_group" "ecs" {
     description = "Allow Redis connection"
   }
 
+  # Egress para PostgreSQL/RDS (puerto 5432)
+  egress {
+    from_port   = 5432
+    to_port     = 5432
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+    description = "Allow PostgreSQL/RDS connection"
+  }
+
   # Egress para servicios AWS (ECR, Secrets Manager, etc)
   egress {
     from_port       = 443
