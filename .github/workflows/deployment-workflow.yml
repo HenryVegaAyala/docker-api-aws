@@ -9,7 +9,7 @@ env:
   ECR_REPOSITORY: ${{secrets.ECR_REPOSITORY}}
   CLUSTER_NAME: ${{secrets.CLUSTER_NAME}}
   SERVICE_NAME: ${{secrets.SERVICE_NAME}}
-  DIR: nodejs
+  DIR: fastapi
 
 jobs:
   deploy:
