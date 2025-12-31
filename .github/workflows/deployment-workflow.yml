@@ -6,9 +6,9 @@ on:
 
 env:
   AWS_REGION: us-east-1
-  ECR_REPOSITORY: 980104892350.dkr.ecr.us-east-1.amazonaws.com/app-aws-dev-api
-  CLUSTER_NAME: app-aws-dev-cluster
-  SERVICE_NAME: app-aws-dev-svc
+  ECR_REPOSITORY: ${{secrets.ECR_REPOSITORY}}
+  CLUSTER_NAME: ${{secrets.CLUSTER_NAME}}
+  SERVICE_NAME: ${{secrets.SERVICE_NAME}}
   DIR: fastapi
 
 jobs:
